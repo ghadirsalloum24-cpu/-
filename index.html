@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ذكريات - أفلام الكرتون</title>
+
+  <style>
+    body {
+      background-color: #0b0f2b;
+      font-family: 'Tahoma', sans-serif;
+      color: #FFD700;
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 30px;
+      background-color: #111533;
+      border-radius: 15px;
+      box-shadow: 0 0 15px #FFD700;
+      text-align: center;
+      border: 2px solid #FFD700;
+    }
+
+    h1 {
+      color: #FFD700;
+      text-shadow: 0 0 10px #FFD700;
+      margin-bottom: 30px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 80%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #FFD700;
+      border-radius: 8px;
+      background-color: #1c1f45;
+      color: #FFD700;
+      font-size: 16px;
+      box-shadow: 0 0 8px #FFD700;
+    }
+
+    button {
+      padding: 12px 24px;
+      background-color: #FFD700;
+      color: #0b0f2b;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 10px #FFD700;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ffe033;
+      box-shadow: 0 0 15px #FFD700;
+    }
+
+    #videoContainer {
+      margin-top: 30px;
+      color: #FFD700;
+      text-shadow: 0 0 8px #FFD700;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>ذكريات - أفلام الكرتون</h1>
+    <input type="text" id="cartoonName" placeholder="أدخل اسم الكرتون">
+    <input type="number" id="episodeNumber" placeholder="رقم الحلقة">
+    <button onclick="searchEpisode()">بحث</button>
+    <div id="videoContainer"></div>
+  </div>
+
+  <script>
+    // ✅ مفتاح YouTube API
+    const API_KEY = "AIzaSyAvQo90NCFEAL9II0LoMEkloit89Mk28WM";
+
+    function searchEpisode() {
+      const cartoonName = document.getElementById("cartoonName").value;
+      const episodeNumber = document.getElementById("episodeNumber").value;
+
+      if (!cartoonName || !episodeNumber) {
+        alert("يرجى إدخال اسم الكرتون ورقم الحلقة!");
+        return;
+      }
+
+      const query = `${cartoonName} الحلقة ${episodeNumber}`;
+      const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&key=${API_KEY}`;
+
+      fetch(url)
+        .then(response => response.json())
+        .then(data => {
+          if (data.items.length > 0) {
+            const videoId = data.items[0].id.videoId;
+            document.getElementById("videoContainer").innerHTML = `
+              <iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe>
+            `;
+          } else {
+            document.getElementById("videoContainer").innerHTML = "<p>لم يتم العثور على الحلقة.</p>";
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching data:", error);
+          document.getElementById("videoContainer").innerHTML = "<p>تاكد من اتصالك بالانترنت.</p>";
+        });
+    }
+  </script>
+
+</body>
+</html>
